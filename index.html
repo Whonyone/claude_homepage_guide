@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>처음 만드는 홈페이지 — Claude와 함께 하는 입문 가이드</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:#F3F5F2; --ink:#1E2622; --muted:#56635C; --felt:#24533F; --felt-deep:#183A2C;
+  --meeple:#E8B33C; --line:#D5DDD7; --code-bg:#183A2C; --code-ink:#E9F0EB; --cell:#FFFFFF;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --paper:#121815; --ink:#E4EAE6; --muted:#9AA8A0; --felt:#7FC3A2; --felt-deep:#183A2C;
+    --line:#2A3530; --code-bg:#0C1210; --code-ink:#DDE7E1; --cell:#18201C; }
+}
+* { box-sizing:border-box; }
+html { -webkit-text-size-adjust:100%; }
+body { margin:0; background:var(--paper); color:var(--ink);
+  font-family:"IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  font-size:17px; line-height:1.75; word-break:keep-all; overflow-wrap:break-word; }
+header { background:var(--felt-deep); color:#F3F5F2;
+  padding:calc(56px + env(safe-area-inset-top,0px)) 24px 48px; }
+header .wrap { max-width:720px; margin:0 auto; }
+header h1 { margin:0; font-size:clamp(28px,6vw,40px); line-height:1.3; font-weight:700; letter-spacing:-0.02em; }
+header p { margin:16px 0 0; color:#B9CCBF; font-size:15px; }
+.dice { display:inline-flex; gap:6px; margin-bottom:20px; }
+.dice span { width:14px; height:14px; border-radius:3px; background:var(--meeple); }
+.dice span:nth-child(2) { background:#C9573E; } .dice span:nth-child(3) { background:#5B8FC9; }
+main { max-width:720px; margin:0 auto; padding:40px 24px calc(80px + env(safe-area-inset-bottom,0px)); }
+h2 { font-size:24px; line-height:1.4; margin:64px 0 16px; padding-top:20px; border-top:3px solid var(--felt); color:var(--felt); letter-spacing:-0.01em; scroll-margin-top:16px; }
+p { margin:0 0 16px; }
+ol, ul { padding-left:1.4em; margin:0 0 16px; } li { margin:4px 0; }
+a { color:var(--felt); text-underline-offset:3px; }
+a:focus-visible, button:focus-visible { outline:3px solid var(--meeple); outline-offset:2px; }
+code { font-family:ui-monospace, "SFMono-Regular", Consolas, monospace; font-size:0.88em;
+  background:color-mix(in srgb, var(--felt) 12%, transparent); padding:1px 6px; border-radius:4px; }
+.code { position:relative; margin:0 0 20px; }
+pre { background:var(--code-bg); color:var(--code-ink); padding:20px; border-radius:10px; overflow-x:auto;
+  white-space:pre-wrap; font-size:14.5px; line-height:1.7; margin:0; }
+pre code { background:none; padding:0; font-size:inherit; color:inherit; }
+.copy { position:absolute; top:10px; right:10px; border:0; border-radius:6px; padding:6px 12px;
+  background:var(--meeple); color:#1E2622; font:500 13px/1 inherit; font-family:inherit; cursor:pointer; }
+.copy.done { background:#9FD3B5; }
+.tbl { overflow-x:auto; margin:0 0 20px; border:1px solid var(--line); border-radius:10px; background:var(--cell); }
+table { border-collapse:collapse; width:100%; font-size:15px; line-height:1.6; }
+th, td { text-align:left; vertical-align:top; padding:12px 14px; border-bottom:1px solid var(--line); }
+th { font-weight:700; color:var(--muted); font-size:14px; }
+tr:last-child td { border-bottom:0; }
+td:first-child { font-weight:500; white-space:nowrap; }
+@media (max-width:560px) { td:first-child { white-space:normal; } body { font-size:16px; } }
+@media (prefers-reduced-motion: reduce) { * { transition:none !important; } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<div class="dice" aria-hidden="true"><span></span><span></span><span></span></div>
+<h1>처음 만드는 홈페이지 — Claude와 함께 하는 입문 가이드</h1>
+</div></header>
+<main>
+<p>코드를 몰라도 VS Code와 Claude를 쓰면 간단한 소개용 홈페이지를 직접 만들고 인터넷에 올릴 수 있어요. 코드는 Claude가 쓰고, 여러분은 원하는 걸 말로 설명하고 화면으로 확인하는 역할을 맡습니다.</p>
+<p>전체 흐름은 이렇게 5단계예요.</p>
+<ol>
+<li>프로그램 3개 설치하기</li>
+<li>첫 프롬프트로 홈페이지 뼈대 만들기</li>
+<li>내 컴퓨터에서 화면 확인하기</li>
+<li>조금씩 고쳐가며 완성하기 (중간중간 저장)</li>
+<li>인터넷에 올려서 주소 받기</li>
+</ol>
+<h2 id="_1">목차</h2>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>섹션</th>
+<th>담긴 내용</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. 준비물 설치하기</td>
+<td>VS Code, Node.js, Claude 확장 설치와 작업 폴더 준비</td>
+</tr>
+<tr>
+<td>2. 첫 프롬프트로 뼈대 만들기</td>
+<td>복사해서 쓰는 첫 프롬프트, Claude 권한 요청 허용·거절 기준</td>
+</tr>
+<tr>
+<td>3. 내 컴퓨터에서 화면 확인하기</td>
+<td><code>npm run dev</code>로 실행하고 브라우저에서 보는 법</td>
+</tr>
+<tr>
+<td>4. 조금씩 고쳐가며 완성하기</td>
+<td>요청을 잘게 쪼개는 요령, 배우면서 하는 법</td>
+</tr>
+<tr>
+<td>4-1. 잘 될 때마다 저장하기</td>
+<td>Git으로 저장 지점 만들고 되돌리는 두 문장</td>
+</tr>
+<tr>
+<td>5. 인터넷에 올려서 주소 받기</td>
+<td>Cloudflare Pages에 무료로 올리는 순서</td>
+</tr>
+<tr>
+<td>막혔을 때</td>
+<td>자주 겪는 증상과 먼저 해볼 것</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="1">1. 준비물 설치하기</h2>
+<p>설치할 건 3개뿐이고, 처음 한 번만 하면 돼요.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>프로그램</th>
+<th>하는 일</th>
+<th>설치 방법</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VS Code</td>
+<td>코드 파일을 열고 편집하는 작업 공간</td>
+<td><a href="https://code.visualstudio.com">code.visualstudio.com</a>에서 다운로드</td>
+</tr>
+<tr>
+<td>Node.js</td>
+<td>홈페이지를 내 컴퓨터에서 실행해주는 엔진</td>
+<td><a href="https://nodejs.org">nodejs.org</a>에서 LTS 버전 다운로드</td>
+</tr>
+<tr>
+<td>Claude 확장</td>
+<td>VS Code 안에서 Claude에게 일을 시키는 창</td>
+<td>VS Code 왼쪽 확장(Extensions) 메뉴에서 "Claude Code" 검색 후 설치, 로그인</td>
+</tr>
+</tbody>
+</table></div>
+<p>설치가 잘 됐는지 확인하려면 VS Code 상단 메뉴에서 터미널 → 새 터미널을 열고 아래를 입력해보세요. 숫자(버전)가 나오면 성공이에요.</p>
+<pre><code>node -v
+</code></pre>
+<p>마지막으로 바탕화면 같은 곳에 빈 폴더를 하나 만들고(예: <code>my-homepage</code>), VS Code에서 파일 → 폴더 열기로 그 폴더를 열어두세요. 앞으로 모든 작업은 이 폴더 안에서 해요.</p>
+<h2 id="2">2. 첫 프롬프트로 뼈대 만들기</h2>
+<p>아래 템플릿을 복사해서 [대괄호] 부분만 내 내용으로 바꾼 뒤 Claude 창에 붙여넣으세요. 모르는 칸은 "알아서 정해줘"라고 써도 괜찮아요.</p>
+<pre><code>나는 코딩을 전혀 모르는 사람이야. React(Vite)로 보드게임 소모임을 홍보하고, 보는 사람이 참가 신청 링크로 넘어갈 수 있는 간단한 홈페이지를 만들고 싶어.
+
+[모임 정보]
+- 모임 이름: [이름]
+- 한 줄 소개: [예: 매주 토요일 오후, 초보도 환영하는 보드게임 모임]
+- 이런 분께 추천: [예: 보드게임 처음 해보는 사람, 새 친구 사귀고 싶은 사람]
+
+[들어갈 내용]
+- 첫 화면: 모임 이름, 한 줄 소개, 대표 사진, 눈에 띄는 &quot;참가 신청하기&quot; 버튼
+- 모임 소개: [분위기, 보통 인원, 참가비 여부 등 2~3문장]
+- 일정·장소: [요일/시간, 장소]
+- 주로 하는 게임: [게임 이름 3~5개] — 각각 카드 형태로 한 줄 설명
+- 사진 갤러리: 모임 사진 몇 장
+- 참가 방법: 버튼을 누르면 [오픈채팅/구글폼/카페 등] 링크로 이동
+- 문의: [오픈채팅, 인스타그램 등 링크]
+
+[사진과 링크]
+- 사진은 내가 나중에 넣을 거라 일단 자리만 만들어두고, 어느 폴더에 어떤 이름으로 넣으면 되는지 알려줘.
+- 버튼 링크들은 나중에 쉽게 바꿀 수 있게 한 파일에 모아두고, 바꾸는 방법을 알려줘.
+- 외부 링크는 새 탭에서 열리게 해줘.
+- 입력 양식(폼), 회원가입, 데이터 저장 기능은 필요 없어. 링크로 넘어가기만 하면 돼.
+
+[분위기]
+- 색감: [예: 따뜻하고 아기자기하게, 주사위·카드 느낌]
+- 참고하고 싶은 느낌: [있으면 적기. 예를 들면 타홈페이지 사진이나 링크 첨부도 가능]
+
+[부탁]
+- 지금 이 폴더에 프로젝트를 새로 만들어줘. 필요한 설치도 알아서 해줘.
+- 한 화면에 위에서 아래로 스크롤되는 구조로 해줘.
+- 대부분 휴대폰으로 볼 테니 모바일에서 특히 잘 보이게 해줘.
+- 다 만들면 내 컴퓨터에서 화면을 확인하는 방법을 쉬운 말로 알려줘.
+- 무슨 파일을 왜 만들었는지 짧게 설명해줘.
+
+[지켜야 할 규칙]
+- 모든 작업은 지금 열려 있는 이 폴더 안에서만 해줘. 이 폴더 밖의 파일이나 폴더는 읽지도, 만들지도, 고치지도 마.
+- 컴퓨터 전체에 설치하는 명령(npm install -g 등), 관리자 권한(sudo), 시스템 설정 변경은 하지 마.
+- 파일이나 폴더를 지워야 할 때는 먼저 무엇을 왜 지우는지 말하고 내 허락을 받아줘.
+- 이 규칙에 걸리는 작업이 꼭 필요하면 실행하지 말고 먼저 설명해줘.
+</code></pre>
+<p>Claude는 명령을 실행하거나 파일을 바꾸기 전에 "이거 해도 될까요?" 하고 물어봐요. 프롬프트에 규칙을 적어둬도 이 확인 단계가 진짜 안전장치이니, 아래 기준으로 판단하세요.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>판단</th>
+<th>이런 요청일 때</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>허용</td>
+<td>이 폴더 안에서 파일 만들기·수정, <code>npm install</code>, <code>npm run dev</code>, <code>npm run build</code></td>
+</tr>
+<tr>
+<td>거절</td>
+<td>이 폴더 밖 경로(바탕화면, 문서, <code>C:\</code> 등)를 건드리는 작업</td>
+</tr>
+<tr>
+<td>거절</td>
+<td>파일·폴더 삭제(<code>rm</code>, <code>del</code>), 관리자 권한(<code>sudo</code>), 컴퓨터 전체 설치(<code>-g</code>), 시스템 설정 변경</td>
+</tr>
+<tr>
+<td>거절 후 질문</td>
+<td>무슨 뜻인지 모르겠는 요청 → "이게 뭐 하는 거야? 이 폴더 밖도 건드려?"</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li>"항상 허용"이나 "다시 묻지 않기" 같은 선택지, 권한 확인을 건너뛰는 모드는 쓰지 마세요. 매번 묻는 게 귀찮아도 그게 보호막이에요.</li>
+<li>Claude 창을 열 때는 꼭 VS Code에서 홈페이지 폴더를 연 상태여야 해요. Claude는 지금 열린 폴더를 작업 공간으로 삼아요.</li>
+</ul>
+<h2 id="3">3. 내 컴퓨터에서 화면 확인하기</h2>
+<p>뼈대가 만들어지면 터미널에 아래를 입력하세요. Claude에게 "실행해줘"라고 해도 돼요.</p>
+<pre><code>npm run dev
+</code></pre>
+<p>터미널에 <code>http://localhost:5173</code> 같은 주소가 뜨면 브라우저 주소창에 그대로 입력하세요. 내 홈페이지가 보이면 성공이에요.</p>
+<ul>
+<li>이 주소는 내 컴퓨터에서만 열려요. 다른 사람에게 보여주려면 5단계(인터넷에 올리기)를 해야 해요.</li>
+<li>켜둔 상태에서 코드를 고치면 브라우저 화면이 자동으로 바뀌어요.</li>
+<li>끄고 싶으면 터미널을 클릭하고 Ctrl + C를 누르면 돼요. 다음에 작업할 땐 다시 <code>npm run dev</code>만 하면 돼요.</li>
+</ul>
+<h2 id="4">4. 조금씩 고쳐가며 완성하기</h2>
+<p>가장 중요한 요령은 한 번에 하나씩 요청하고, 매번 브라우저에서 확인하는 거예요. 한꺼번에 많이 시키면 어디서 꼬였는지 찾기 어려워져요.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>이렇게 말하기보다</th>
+<th>이렇게 말하기</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>더 예쁘게 해줘</td>
+<td>첫 화면 제목을 더 크게, 배경은 연한 회색으로 바꿔줘</td>
+</tr>
+<tr>
+<td>이상해</td>
+<td>휴대폰 크기로 보면 버튼이 화면 밖으로 삐져나가</td>
+</tr>
+<tr>
+<td>기능 추가해줘</td>
+<td>연락처 섹션 아래에 지도 대신 주소 텍스트를 넣어줘</td>
+</tr>
+<tr>
+<td>다 갈아엎어줘</td>
+<td>소개 섹션만 카드 3개가 가로로 놓이는 형태로 바꿔줘</td>
+</tr>
+</tbody>
+</table></div>
+<p>화면을 캡처해서 Claude 창에 붙여넣고 "여기 이 부분"이라고 하면 훨씬 정확하게 알아들어요.</p>
+<p><strong>배우면서 하고 싶다면</strong> 요청 끝에 이 문장을 붙여보세요.</p>
+<pre><code>방금 바꾼 코드가 무슨 역할인지, 내가 직접 고치려면 어느 파일 어디를 보면 되는지 초보자 눈높이로 설명해줘.
+</code></pre>
+<p>익숙해지면 글자나 색 정도는 직접 파일을 열어 고쳐보세요. 그게 가장 빨리 느는 방법이에요.</p>
+<h2 id="4-1">4-1. 잘 될 때마다 저장하기 (되돌리기 대비)</h2>
+<p>Claude가 고치다 보면 가끔 멀쩡하던 화면이 망가지기도 해요. 그래서 마음에 드는 상태가 될 때마다 '저장 지점'을 만들어두는 게 좋아요. 이걸 Git이라는 도구가 해주는데, 어려운 건 Claude에게 맡기면 돼요.</p>
+<p>처음 한 번만 이렇게 요청하세요.</p>
+<pre><code>이 프로젝트에 Git을 설정해주고 지금 상태를 첫 저장 지점으로 커밋해줘.
+</code></pre>
+<p>그 다음부터는 이 두 문장만 기억하면 돼요.</p>
+<ul>
+<li>잘 됐을 때: <code>지금 상태를 "소개 섹션 완성"이라는 이름으로 커밋해줘</code></li>
+<li>망가졌을 때: <code>마지막 커밋 상태로 되돌려줘</code></li>
+</ul>
+<h2 id="5">5. 인터넷에 올려서 주소 받기</h2>
+<p>완성되면 Cloudflare Pages에 무료로 올려서 누구나 접속할 수 있는 주소(<code>이름.pages.dev</code>)를 받을 수 있어요.</p>
+<ol>
+<li>Claude에게 요청하세요: <code>배포용으로 빌드해줘</code> → 프로젝트 안에 <code>dist</code>라는 폴더가 생겨요.</li>
+<li><a href="https://dash.cloudflare.com">dash.cloudflare.com</a>에서 무료 회원가입 후 로그인해요.</li>
+<li>메뉴에서 Workers &amp; Pages → 만들기 → Pages → 파일 직접 업로드(Upload assets)를 골라요.</li>
+<li>프로젝트 이름을 정하고(이게 주소가 돼요), <code>dist</code> 폴더를 통째로 끌어다 놓은 뒤 배포를 눌러요.</li>
+<li>잠시 후 나오는 주소를 열어 확인하고 주변에 공유하면 끝이에요.</li>
+</ol>
+<p>수정한 뒤 다시 올릴 때는 1번처럼 다시 빌드하고, 같은 프로젝트에서 새 배포로 <code>dist</code>를 올리면 돼요. Cloudflare 화면 메뉴 이름은 바뀔 수 있으니, 헷갈리면 화면을 캡처해서 Claude에게 물어보세요.</p>
+<h2 id="_2">막혔을 때</h2>
+<p>대부분의 문제는 에러 메시지를 Claude에게 그대로 보여주면 해결돼요. 혼자 해석하려 하지 말고 이렇게 붙여넣으세요: <code>이런 에러가 났어. 쉬운 말로 원인이랑 해결해줘</code> + 에러 내용 복사.</p>
+<div class="tbl"><table>
+<thead>
+<tr>
+<th>증상</th>
+<th>먼저 해볼 것</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>npm</code>이나 <code>node</code> 명령을 못 찾는다고 나옴</td>
+<td>Node.js 설치 후 VS Code를 완전히 껐다 켜기</td>
+</tr>
+<tr>
+<td>브라우저에 아무것도 안 뜸</td>
+<td>터미널에서 <code>npm run dev</code>가 켜져 있는지 확인</td>
+</tr>
+<tr>
+<td>고쳤는데 화면이 그대로임</td>
+<td>파일이 저장됐는지(Ctrl + S) 확인 후 새로고침</td>
+</tr>
+<tr>
+<td>Claude가 고칠수록 더 꼬임</td>
+<td>마지막 커밋으로 되돌리고, 요청을 더 작게 쪼개기</td>
+</tr>
+<tr>
+<td>대화가 너무 길어져 Claude가 앞 내용을 헷갈림</td>
+<td>새 대화를 열고 "이 프로젝트 구조를 먼저 파악해줘"로 시작</td>
+</tr>
+</tbody>
+</table></div>
+<p>그래도 안 되면 지금 화면과 하려던 일을 캡처해서 주변 개발자에게 보여주세요. 그것도 충분히 좋은 공부예요.</p>
+</main>
+<script>
+document.querySelectorAll('pre').forEach(pre => {
+  const wrap = document.createElement('div'); wrap.className = 'code';
+  pre.parentNode.insertBefore(wrap, pre); wrap.appendChild(pre);
+  const btn = document.createElement('button'); btn.className = 'copy'; btn.type = 'button'; btn.textContent = '복사';
+  btn.addEventListener('click', async () => {
+    const text = pre.innerText;
+    try { await navigator.clipboard.writeText(text); }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); document.execCommand('copy'); s.removeAllRanges(); }
+    btn.textContent = '복사됨'; btn.classList.add('done');
+    setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('done'); }, 1600);
+  });
+  wrap.appendChild(btn);
+});
+// 목차 표의 섹션 이름을 해당 섹션 링크로
+const heads = [...document.querySelectorAll('main h2')];
+const toc = heads.find(h => h.textContent.trim() === '목차');
+if (toc) {
+  const tbl = toc.nextElementSibling;
+  tbl && tbl.querySelectorAll('tbody td:first-child').forEach(td => {
+    const h = heads.find(x => x.textContent.trim().startsWith(td.textContent.trim()));
+    if (h) td.innerHTML = `<a href="#${h.id}">${td.textContent}</a>`;
+  });
+}
+</script>
+</body>
+</html>
